@@ -21,11 +21,7 @@ public interface OnBaseCompressGlideCallback {
 
     default void onCancel(){}
 
-    interface OnCompressGlideBitmapCallback extends OnBaseCompressGlideCallback {
-        void onResult(@NonNull Bitmap bitmap);
-    }
 
-    interface OnCompressGlideImageCallback extends OnBaseCompressGlideCallback {
-        void onResult(@NonNull File file);
-    }
+
+
 }

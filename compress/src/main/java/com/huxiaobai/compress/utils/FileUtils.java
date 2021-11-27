@@ -1,6 +1,10 @@
 package com.huxiaobai.compress.utils;
 
+import android.content.Context;
 import android.media.MediaMetadataRetriever;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import java.io.File;
 
@@ -11,8 +15,10 @@ import java.io.File;
  * 描述:
  */
 public class FileUtils {
+    public static final String FILE_HOST_NAME = "MediaX";
+
     public static boolean isStaticImage(String filePath) {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+       /* MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
             retriever.setDataSource(filePath);
             String mimeTye = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
@@ -23,8 +29,10 @@ public class FileUtils {
         } finally {
             retriever.release();
         }
-        return false;
+        return false;*/
+        return true;
     }
+
 
     public static boolean exitFile(String path) {
         if (DataUtils.isEmpty(path)) {
@@ -36,5 +44,25 @@ public class FileUtils {
 
     public static boolean exitFile(File file) {
         return file != null && file.exists() && file.isFile();
+    }
+
+    public static File getPublicRootDirectory(@NonNull Context context) {
+        File file;
+        File[] files = ContextCompat.getExternalFilesDirs(context, FileUtils.FILE_HOST_NAME);
+        if (files.length > 0) {
+            file = files[0];
+        } else {
+            file = context.getExternalFilesDir(FileUtils.FILE_HOST_NAME);
+        }
+        return file;
+    }
+
+    public static String createImageName() {
+        String name = System.currentTimeMillis() + Math.random() * 100 + "";
+        if (name.length() > 8) {
+            name = name.substring(name.length() - 8);
+        }
+        return name + (int) (Math.random() * 10000) + "" + (int) (Math.random() * 1000) + "" + (int) (Math.random() * 100) + ".jpeg";
+
     }
 }
