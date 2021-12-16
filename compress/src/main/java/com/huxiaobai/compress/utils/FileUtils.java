@@ -2,11 +2,13 @@ package com.huxiaobai.compress.utils;
 
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
+import java.util.UUID;
 
 /**
  * 作者: 胡庆岭
@@ -18,18 +20,20 @@ public class FileUtils {
     public static final String FILE_HOST_NAME = "MediaX";
 
     public static boolean isStaticImage(String filePath) {
-       /* MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+       /* boolean isStaticImage = false;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
             retriever.setDataSource(filePath);
             String mimeTye = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
             mimeTye = DataUtils.checkNull(mimeTye).toString();
-            return mimeTye.startsWith("image/") && !mimeTye.endsWith("/gif");
+            isStaticImage = mimeTye.startsWith("image/") && !mimeTye.endsWith("/gif");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             retriever.release();
         }
-        return false;*/
+        Log.w("isStaticImage----", isStaticImage + "---");
+        return isStaticImage;*/
         return true;
     }
 
@@ -58,11 +62,16 @@ public class FileUtils {
     }
 
     public static String createImageName() {
-        String name = System.currentTimeMillis() + Math.random() * 100 + "";
+        int random = (int) (Math.random() * 1000);
+        String name = System.currentTimeMillis() + random + "";
         if (name.length() > 8) {
             name = name.substring(name.length() - 8);
         }
-        return name + (int) (Math.random() * 10000) + "" + (int) (Math.random() * 1000) + "" + (int) (Math.random() * 100) + ".jpeg";
+        String uuid = UUID.randomUUID().toString().trim().replaceAll("-", "");
+        if (uuid.length() > 6) {
+            uuid = uuid.substring(uuid.length() - 6);
+        }
+        return "img_" + uuid + name + ".jpeg";
 
     }
 }

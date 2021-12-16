@@ -12,7 +12,7 @@ import java.io.File;
  * 更新时间: 2021/11/26 11:34
  * 描述:
  */
-public interface OnBaseCompressGlideCallback {
+public interface OnBaseCompressGlideCallbacks {
     default void onStart() {
     }
 

@@ -10,6 +10,6 @@ import java.io.File;
  * 更新时间: 2021/11/27 14:33
  * 描述:
  */
-public interface OnCompressGlideImageCallback extends OnBaseCompressGlideCallback{
+public interface OnCompressGlideImageCallback extends OnBaseCompressGlideCallbacks {
     void onResult(@NonNull File file);
 }
