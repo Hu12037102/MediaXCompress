@@ -9,6 +9,7 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -26,6 +27,8 @@ import java.util.List;
 public class MainActivity extends PermissionActivity {
 
     private AppCompatImageView mAivContentOriginal;
+    private String mImagePath;
+    private AppCompatImageView mAivContentCompress;
 
     @Override
     @SuppressLint("IntentReset")
@@ -33,11 +36,11 @@ public class MainActivity extends PermissionActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAivContentOriginal = findViewById(R.id.aiv_content_original);
+        mAivContentCompress = findViewById(R.id.aiv_content_compress);
 
         findViewById(R.id.atv_compress).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAivContentOriginal.setImageResource(R.color.white);
                 requestPermission();
 
 
@@ -49,7 +52,7 @@ public class MainActivity extends PermissionActivity {
                 try {
                     Intent intent = new Intent();
                     intent.setType("image/*");
-                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
                     intent.setAction(Intent.ACTION_PICK);
                     intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
@@ -65,8 +68,12 @@ public class MainActivity extends PermissionActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == RESULT_OK) {
-            ClipData clipData = data.getClipData();
-            Log.w("onActivityResult--", clipData.getItemCount() + "--");
+            //  ClipData clipData = data.getClipData();
+            //  Log.w("onActivityResult--", clipData.getItemCount() + "--");
+            Uri uri = data.getData();
+            mAivContentOriginal.setImageURI(uri);
+            mImagePath = FileUtils.getMediaPath(this, uri);
+            Log.w("onActivityResult", uri + "--"+mImagePath);
         }
     }
 
@@ -74,10 +81,7 @@ public class MainActivity extends PermissionActivity {
         requestPermission(new OnPermissionsResult() {
             @Override
             public void onAllow(List<String> allowPermissions) {
-                String path = FileUtils.getPublicRootDirectory(MainActivity.this).getAbsolutePath() + "/IMG_20211127_172424.jpg";
-                //  String path = FileUtils.getPublicRootDirectory(this).getAbsolutePath() + "/huge.jpg";
-                File file = new File(path);
-                Log.w("MainActivity--", file.getAbsolutePath() + "---" + FileUtils.exitFile(file));
+                Log.w("MainActivity--", FileUtils.exitFile(mImagePath)+"--");
 
                 CompressGlide.fromImage()
                         .compressHeight(1280)
@@ -86,10 +90,10 @@ public class MainActivity extends PermissionActivity {
                         .compressBitmapSize(120)
                         .create(MainActivity.this)
                         .addLifecycle(getLifecycle())
-                        .compressImage(path, new OnCompressGlideImageCallback() {
+                        .compressImage(mImagePath, new OnCompressGlideImageCallback() {
                             @Override
                             public void onResult(@NonNull File file) {
-                                mAivContentOriginal.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                                mAivContentCompress.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
                                 Log.w("asyncCompressImage", "我成功了" + file.getAbsolutePath() + "--");
                             }
 

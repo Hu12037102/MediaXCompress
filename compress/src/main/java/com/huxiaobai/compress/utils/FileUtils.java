@@ -1,7 +1,11 @@
 package com.huxiaobai.compress.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -73,5 +77,22 @@ public class FileUtils {
         }
         return "img_" + uuid + name + ".jpeg";
 
+    }
+
+    public static String getMediaPath(@NonNull Context context, @NonNull Uri uri) {
+        String uriPath = "";
+        try {
+            ContentResolver resolver = context.getApplicationContext().getContentResolver();
+            String[] filePathColumn = {MediaStore.MediaColumns.DATA};
+            Cursor cursor = resolver.query(uri, filePathColumn, null, null, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                uriPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                cursor.close();
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return uriPath;
     }
 }
