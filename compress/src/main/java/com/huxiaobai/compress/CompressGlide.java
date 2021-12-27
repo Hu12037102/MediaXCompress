@@ -42,10 +42,10 @@ public final class CompressGlide implements LifecycleEventObserver {
     private BaseCreate mCreate;
     private final List<Lifecycle> mLifecycles = new ArrayList<>();
     private final Handler mMainHandler = new Handler(Looper.getMainLooper());
-    private final ExecutorService mThreadService;
+    private ExecutorService mThreadService;
 
     private CompressGlide() {
-        mThreadService = Executors.newFixedThreadPool(9);
+
     }
 
     private static final CompressGlide mInstance = new CompressGlide();
@@ -86,7 +86,18 @@ public final class CompressGlide implements LifecycleEventObserver {
         mLifecycles.clear();
     }
 
-    public void stopCompress() {
+    private void initThreadService() {
+        if (mThreadService == null || mThreadService.isShutdown()) {
+            mThreadService = Executors.newFixedThreadPool(9);
+        }
+    }
+
+    private void startThreadService(@NonNull Runnable runnable) {
+        initThreadService();
+        mThreadService.execute(runnable);
+    }
+
+    public void stopThreadService() {
         if (mThreadService != null && !mThreadService.isShutdown()) {
             mThreadService.shutdown();
         }
@@ -161,7 +172,7 @@ public final class CompressGlide implements LifecycleEventObserver {
         if (callback != null) {
             callback.onStart();
         }
-        mThreadService.execute(new Runnable() {
+        startThreadService(new Runnable() {
             @Override
             public void run() {
                 Bitmap bitmap = compressBitmap(fromImagePath);
@@ -179,8 +190,6 @@ public final class CompressGlide implements LifecycleEventObserver {
                 });
             }
         });
-
-
     }
 
     private File bitmapToFile(Bitmap bitmap, BaseCreate create, String compressImagePath) {
@@ -242,23 +251,26 @@ public final class CompressGlide implements LifecycleEventObserver {
     public synchronized void compressImage(@NonNull String fromImagePath, OnCompressGlideImageCallback callback) {
         if (mCreate instanceof ImageCreate) {
             ImageCreate imageCreate = (ImageCreate) mCreate;
-            mThreadService.execute(() -> {
-                Log.w("mThreadService--", Thread.currentThread() + "--");
-                try {
-                    Bitmap bitmap = compressBitmap(fromImagePath);
-                    File file = bitmapToFile(bitmap, imageCreate, imageCreate.compressImagePath);
-                    mMainHandler.post(() -> {
-                        if (callback != null) {
-                            if (file != null) {
-                                callback.onResult(file);
-                            } else {
-                                callback.onError("compress fail,file is null");
-                            }
+            startThreadService(new Runnable() {
+                @Override
+                public void run() {
+                    Log.w("mThreadService--", Thread.currentThread() + "--");
+                    try {
+                        Bitmap bitmap = compressBitmap(fromImagePath);
+                        File file = bitmapToFile(bitmap, imageCreate, imageCreate.compressImagePath);
+                        mMainHandler.post(() -> {
+                            if (callback != null) {
+                                if (file != null) {
+                                    callback.onResult(file);
+                                } else {
+                                    callback.onError("compress fail,file is null");
+                                }
 
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
@@ -280,26 +292,39 @@ public final class CompressGlide implements LifecycleEventObserver {
             callbacks.onStart();
         }
         List<File> results = new ArrayList<>();
-        mThreadService.execute(new Runnable() {
+        startThreadService(new Runnable() {
             @Override
             public void run() {
                 for (String path : formPaths) {
                     Bitmap bitmap = structureBitmap(path, mCreate);
                     File imageFile = new File(FileUtils.getPublicRootDirectory(mApplicationContext), FileUtils.createImageName());
                     imageFile = bitmapToFile(bitmap, mCreate, imageFile.getAbsolutePath());
-                    if (FileUtils.exitFile(imageFile)){
+                    if (FileUtils.exitFile(imageFile)) {
                         results.add(imageFile);
-                    }else {
-                        if (callbacks!=null){
-                            callbacks.onError("compress fail");
-                        }
-                        stopCompress();
+                    } else {
+                        mMainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (callbacks != null) {
+                                    callbacks.onError("compress fail");
+                                }
+                            }
+                        });
+                        stopThreadService();
                         return;
                     }
                 }
-                if (callbacks!=null){
-                    callbacks.onResults(results);
+                if (callbacks != null) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callbacks.onResults(results);
+                        }
+                    });
+
                 }
+
+
             }
         });
     }
@@ -309,7 +334,7 @@ public final class CompressGlide implements LifecycleEventObserver {
     public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
         if (event == Lifecycle.Event.ON_DESTROY) {
             try {
-                stopCompress();
+                stopThreadService();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -377,6 +402,7 @@ public final class CompressGlide implements LifecycleEventObserver {
         private final Bitmap.CompressFormat format = Bitmap.CompressFormat.JPEG;
         //kb
         protected int compressBitmapSize = 150;
+
         public abstract CompressGlide create(Context context);
     }
 

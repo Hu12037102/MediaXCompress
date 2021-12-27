@@ -6,36 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/aiv_content_original"
-        android:layout_width="0dp"
-        android:layout_height="240dp"
-        android:layout_margin="5dp"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/aiv_content_compress"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="#10000000"/>
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_original"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="点击选择图片"
-        app:layout_constraintTop_toTopOf="@id/aiv_content_original"
-        app:layout_constraintLeft_toLeftOf="@id/aiv_content_original"
-        app:layout_constraintRight_toRightOf="@id/aiv_content_original"
-        app:layout_constraintBottom_toBottomOf="@id/aiv_content_original"
-        />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/aiv_content_compress"
-        android:layout_width="0dp"
-        android:layout_height="240dp"
-        android:layout_margin="5dp"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintLeft_toRightOf="@id/aiv_content_original"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="#10000000" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/atv_compress"
@@ -43,5 +18,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="压缩图片"
-        app:layout_constraintTop_toBottomOf="@id/aiv_content_original" />
+        app:layout_constraintTop_toBottomOf="@id/rv_original" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_compress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/atv_compress"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

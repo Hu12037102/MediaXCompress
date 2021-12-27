@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MediaXCompress</string>
+    <string name="please_selector_image">请选择图片~</string>
 </resources>
