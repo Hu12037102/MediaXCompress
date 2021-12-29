@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -39,6 +40,7 @@ public class MainActivity extends PermissionActivity {
     private ItemAdapter mOriginalAdapter;
     private List<Item> mCompressItems;
     private ItemAdapter mCompressAdapter;
+    private ProgressDialog mLoadingDialog;
 
     @Override
     @SuppressLint("IntentReset")
@@ -107,27 +109,31 @@ public class MainActivity extends PermissionActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == RESULT_OK) {
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
             //  ClipData clipData = data.getClipData();
             //  Log.w("onActivityResult--", clipData.getItemCount() + "--");
          /*   Uri uri = data.getData();
             mAivContentOriginal.setImageURI(uri);
             mImagePath = FileUtils.getMediaPath(this, uri);
             Log.w("onActivityResult", uri + "--" + mImagePath);*/
+            try {
+                ClipData clipData = data.getClipData();
+                if (clipData != null) {
+                    for (int i = 0; i < clipData.getItemCount(); i++) {
+                        ClipData.Item item = clipData.getItemAt(i);
+                        Uri itemUri = item.getUri();
+                        Item mediaItem = new Item();
+                        mediaItem.uri = itemUri;
+                        mOriginalItems.add(0, mediaItem);
 
-            ClipData clipData = data.getClipData();
-            if (clipData != null) {
-                for (int i = 0; i < clipData.getItemCount(); i++) {
-                    ClipData.Item item = clipData.getItemAt(i);
-                    Uri itemUri = item.getUri();
-                    Item mediaItem = new Item();
-                    mediaItem.uri = itemUri;
-                    mOriginalItems.add(0, mediaItem);
-
-                    Log.w("onActivityResult--", itemUri + "---");
+                        Log.w("onActivityResult--", itemUri + "---");
+                    }
+                    mOriginalAdapter.notifyDataSetChanged();
                 }
-                mOriginalAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
         }
     }
 
@@ -165,23 +171,26 @@ public class MainActivity extends PermissionActivity {
                                     mCompressItems.add(item);
                                 }
                                 mCompressAdapter.notifyDataSetChanged();
+                                dismissLoadingDialog();
                                 Log.w("asyncCompressImage", "我成功了" + files.size() + "--");
                             }
 
                             @Override
                             public void onStart() {
                                 Log.w("asyncCompressImage", "我开始了");
+                                showLoadingDialog();
                             }
 
                             @Override
                             public void onError(String errorMessage) {
                                 Log.w("asyncCompressImage", "我失败了" + errorMessage);
-
+                                dismissLoadingDialog();
                             }
 
                             @Override
                             public void onCancel() {
                                 Log.w("asyncCompressImage", "我取消了");
+                                dismissLoadingDialog();
                             }
                         });
 
@@ -229,5 +238,20 @@ public class MainActivity extends PermissionActivity {
 
             }
         }, Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    private void showLoadingDialog() {
+        if (mLoadingDialog == null) {
+            mLoadingDialog = new ProgressDialog(this);
+            mLoadingDialog.setMessage("正在加载...");
+        }
+        if (!mLoadingDialog.isShowing()) {
+            mLoadingDialog.show();
+        }
+    }
+    private void dismissLoadingDialog(){
+        if (mLoadingDialog!=null && mLoadingDialog.isShowing()){
+            mLoadingDialog.dismiss();
+        }
     }
 }
