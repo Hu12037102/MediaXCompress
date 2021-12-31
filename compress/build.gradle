@@ -1,6 +1,12 @@
 plugins {
     id 'com.android.library'
+   // id 'com.github.dcendents.android-maven'
+    // id  'com.github.dcendents.android-maven'//this
+    //
 }
+group='com.github.Hu12037102'//this
+//apply plugin: 'com.github.dcendents.android-maven'//this
+//group='com.github.Hu12037102'//this
 
 android {
     compileSdk 31
