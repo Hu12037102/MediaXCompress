@@ -324,25 +324,6 @@ public final class CompressGlide implements LifecycleEventObserver {
                         file = new File(path);
                         results.add(file);
                     }
-
-
-                    /*Bitmap bitmap = structureBitmap(path, mCreate);
-                    File imageFile = new File(FileUtils.getPublicRootDirectory(mApplicationContext), FileUtils.createImageName());
-                    imageFile = bitmapToFile(bitmap, mCreate, imageFile.getAbsolutePath());
-                    if (FileUtils.exitFile(imageFile)) {
-                        results.add(imageFile);
-                    } else {
-                        mMainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (callbacks != null) {
-                                    callbacks.onError("compress fail");
-                                }
-                            }
-                        });
-                        stopThreadService();
-                        return;
-                    }*/
                 }
                 if (callbacks != null) {
                     mMainHandler.post(new Runnable() {

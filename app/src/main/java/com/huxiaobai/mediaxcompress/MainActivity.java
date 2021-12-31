@@ -157,6 +157,40 @@ public class MainActivity extends PermissionActivity {
                     return;
                 }
                 CompressGlide.fromImage()
+                        .create(MainActivity.this)
+                        .compressImages(data, new OnCompressGlideImageCallbacks() {
+                    @Override
+                    public void onResults(List<File> files) {
+                        for (File file : files) {
+                            Uri uri = Uri.fromFile(file);
+                            Item item = new Item();
+                            item.uri = uri;
+                            mCompressItems.add(item);
+                        }
+                        mCompressAdapter.notifyDataSetChanged();
+                        dismissLoadingDialog();
+                        Log.w("asyncCompressImage", "我成功了" + files.size() + "--");
+                    }
+
+                    @Override
+                    public void onStart() {
+                        Log.w("asyncCompressImage", "我开始了");
+                        showLoadingDialog();
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.w("asyncCompressImage", "我失败了" + errorMessage);
+                        dismissLoadingDialog();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.w("asyncCompressImage", "我取消了");
+                        dismissLoadingDialog();
+                    }
+                });
+              /*  CompressGlide.fromImage()
                         .compressHeight(1280)
                         .compressWith(720)
                         .config(Bitmap.Config.RGB_565)
@@ -194,7 +228,7 @@ public class MainActivity extends PermissionActivity {
                                 Log.w("asyncCompressImage", "我取消了");
                                 dismissLoadingDialog();
                             }
-                        });
+                        });*/
 
                 /*CompressGlide.fromImage()
                         .compressHeight(1280)
