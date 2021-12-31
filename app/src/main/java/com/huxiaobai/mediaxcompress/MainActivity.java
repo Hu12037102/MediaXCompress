@@ -68,6 +68,8 @@ public class MainActivity extends PermissionActivity {
         findViewById(R.id.atv_compress).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mCompressItems.clear();
+                mCompressAdapter.notifyDataSetChanged();
                 requestPermission();
             }
         });

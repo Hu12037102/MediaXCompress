@@ -3,6 +3,7 @@ package com.huxiaobai.compress.utils;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -24,6 +25,12 @@ public class FileUtils {
     public static final String FILE_HOST_NAME = "MediaX";
 
     public static boolean isStaticImage(String filePath) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        String mimeType = options.outMimeType;
+        Log.w("isStaticImage--",mimeType);
+        return mimeType != null && mimeType.startsWith("image/")&& !mimeType.endsWith("/gif");
        /* boolean isStaticImage = false;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
@@ -37,8 +44,8 @@ public class FileUtils {
             retriever.release();
         }
         Log.w("isStaticImage----", isStaticImage + "---");
-        return isStaticImage;*/
-        return true;
+        return isStaticImage;
+        return true;*/
     }
 
 

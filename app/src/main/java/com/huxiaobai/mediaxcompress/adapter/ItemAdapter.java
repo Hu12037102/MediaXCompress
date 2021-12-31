@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.huxiaobai.compress.utils.FileUtils;
 import com.huxiaobai.mediaxcompress.R;
 import com.huxiaobai.mediaxcompress.entity.Item;
 
