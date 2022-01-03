@@ -95,9 +95,10 @@ public class MainActivity extends PermissionActivity {
                     mCompressAdapter.notifyDataSetChanged();
 
                     Intent intent = new Intent();
-                    intent.setType("image/*");
+                   // intent.setType("image/*");
+                    intent.setType("video/*");
                     intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                    intent.putExtra(Intent.EXTRA_ALARM_COUNT, 9);
+                    intent.putExtra(Intent.EXTRA_ALARM_COUNT, "9");
                     intent.setAction(Intent.ACTION_PICK);
                     intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);

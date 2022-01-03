@@ -256,11 +256,11 @@ public final class CompressGlide implements LifecycleEventObserver {
                 public void run() {
                     Log.w("mThreadService--", Thread.currentThread() + "--");
                     try {
-                        File file ;
-                        if (FileUtils.isStaticImage(fromImagePath)){
+                        File file;
+                        if (FileUtils.isStaticImage(fromImagePath)) {
                             Bitmap bitmap = compressBitmap(fromImagePath);
                             file = bitmapToFile(bitmap, imageCreate, imageCreate.compressImagePath);
-                        }else {
+                        } else {
                             file = new File(fromImagePath);
                         }
                         mMainHandler.post(() -> {
@@ -309,7 +309,7 @@ public final class CompressGlide implements LifecycleEventObserver {
                         if (FileUtils.exitFile(file)) {
                             results.add(file);
                         } else {
-                            mMainHandler.post(new Runnable() {
+                          /*  mMainHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     if (callbacks != null) {
@@ -318,12 +318,14 @@ public final class CompressGlide implements LifecycleEventObserver {
                                 }
                             });
                             stopThreadService();
-                            return;
+                            return;*/
+                            results.add(new File(path));
                         }
                     } else {
                         file = new File(path);
                         results.add(file);
                     }
+                    Log.w("compressImages--", path + "---");
                 }
                 if (callbacks != null) {
                     mMainHandler.post(new Runnable() {

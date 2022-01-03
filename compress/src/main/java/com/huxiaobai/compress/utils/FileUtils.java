@@ -25,12 +25,18 @@ public class FileUtils {
     public static final String FILE_HOST_NAME = "MediaX";
 
     public static boolean isStaticImage(String filePath) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
-        String mimeType = options.outMimeType;
-        Log.w("isStaticImage--",mimeType);
-        return mimeType != null && mimeType.startsWith("image/")&& !mimeType.endsWith("/gif");
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(filePath, options);
+            String mimeType = options.outMimeType;
+            Log.w("isStaticImage--", mimeType);
+            return mimeType != null && mimeType.startsWith("image/") && !mimeType.endsWith("/gif");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+
        /* boolean isStaticImage = false;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
