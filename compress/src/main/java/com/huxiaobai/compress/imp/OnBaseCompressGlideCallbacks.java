@@ -19,7 +19,7 @@ public interface OnBaseCompressGlideCallbacks {
     default void onError(String errorMessage) {
     }
 
-    default void onCancel(){}
+    //default void onCancel(){}
 
 
 

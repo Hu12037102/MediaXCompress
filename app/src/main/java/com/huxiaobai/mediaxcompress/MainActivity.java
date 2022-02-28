@@ -185,11 +185,7 @@ public class MainActivity extends PermissionActivity {
                         dismissLoadingDialog();
                     }
 
-                    @Override
-                    public void onCancel() {
-                        Log.w("asyncCompressImage", "我取消了");
-                        dismissLoadingDialog();
-                    }
+
                 });
               /*  CompressGlide.fromImage()
                         .compressHeight(1280)

@@ -249,6 +249,9 @@ public final class CompressGlide implements LifecycleEventObserver {
     }
 
     public synchronized void compressImage(@NonNull String fromImagePath, OnCompressGlideImageCallback callback) {
+        if (callback!=null){
+            callback.onStart();
+        }
         if (mCreate instanceof ImageCreate) {
             ImageCreate imageCreate = (ImageCreate) mCreate;
             startThreadService(new Runnable() {
